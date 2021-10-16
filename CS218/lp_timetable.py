@@ -3,6 +3,48 @@
 # Course - CS218
 # Language - Python3
 ########################################################################################
+# Problem Statement - 
+# Integer linear programming is used to make the institute timetable.
+# In this exercise you will try a simplified version of it.
+# The input has the following form (tentative):
+
+# no-of-slots
+# number-of-class-rooms room-capacity ...
+# no of courses
+# course-no no-of-attending-students name-of-student ...
+# ...
+
+# You are supposed to assign a slot and a room to each course such that
+# courses having common students are scheduled in distinct slots.
+# Further, a course should be scheduled in a room of capacity no smaller
+# than its enrollment.
+
+# For example, the input might be
+
+# 2
+# 2 3 4
+# 4
+# cs601 3 xxx yyy zzz
+# cs602 4 xxx aaa bbb ccc
+# cs603 2 ppp zzz
+# cs604 4 mmm ppp qqq rrr
+
+# This says there are 2 slots, 2 classrooms of capacity 3, 4, and 4
+# courses with some number of students.  A timetable is feasible for
+# these constraints.  In slot1 we schedule cs601 in room1 and cs604 in
+# room2.  In slot2 we schedule cs603 in room1, cs602 in room2.
+
+# You are supposed to use the pulp linear programming package in python,
+# an example is given in lec19.mis.py.  It should be self explanatory
+# and there is documentation on the net; however please raise queries on
+# the discussion group in moodle or the general channel on teams.
+
+# The general idea for solving such problems is typically using
+# indicator variables and expressing constraints in terms of those.  In
+# this case you may consider binary variables x_{crs}, which is 1 if
+# course c is scheduled in room r and slot s and 0 otherwise.
+
+########################################################################################
 import pulp as p 
 ########################################################################################
 # Taking input and making the conflict graph
