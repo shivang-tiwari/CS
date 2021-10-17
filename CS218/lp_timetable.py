@@ -6,7 +6,7 @@
 # Problem Statement - 
 # Integer linear programming is used to make the institute timetable.
 # In this exercise you will try a simplified version of it.
-# The input has the following form (tentative):
+# The input has the following form:
 
 # no-of-slots
 # number-of-class-rooms room-capacity ...
@@ -43,6 +43,39 @@
 # indicator variables and expressing constraints in terms of those.  In
 # this case you may consider binary variables x_{crs}, which is 1 if
 # course c is scheduled in room r and slot s and 0 otherwise.
+
+# Output format: 
+
+# If a timetable is not possible satisfying all the constraints, print:
+
+# Not possible
+
+# If a timetable is possible, for every slot, print the list of courses 
+# followed by the assigned room. The list of courses for each slot must be 
+# sorted alphabetically. For instance, the output of the above example:
+
+# slot1
+# cs601 room1
+# cs604 room2
+# slot2
+# cs602 room2
+# cs603 room1
+
+# Another example output (here no course is assigned in slots 2 and 4):
+
+# slot1
+# cs601 room1
+# cs604 room2
+# slot2
+# slot3
+# cs602 room2
+# cs603 room1
+# slot4
+
+# In case of multiple possible timetables, print any one. 
+
+# Make sure you strictly follow the output format. Nothing else should be 
+# printed (such as "Enter no. of slots ..." etc.) except the required output.
 
 ########################################################################################
 import pulp as p 
@@ -100,6 +133,13 @@ for i in range(C):
 			allsum += x[i][j][k]
 	Lp_prob += allsum == 1
 
+# A course can't be in a room with lower capacity
+for k in range(S):
+	for i in range(C):
+		for j in range(R):
+			if(len(students[i]) > int(cap[j])):
+				Lp_prob += x[i][j][k] == 0
+
 # No two courses in the same slot and same room
 for j in range(R):
 	for k in range(S):
@@ -118,13 +158,16 @@ for k in range(S):
 			Lp_prob += allsum <= 1
 			
 ########################################################################################
-print(Lp_prob)
-status = Lp_prob.solve()   # Solver 
-print(p.LpStatus[status])   # The solution status 
+status = Lp_prob.solve(p.PULP_CBC_CMD(msg=0))   # Solver 
 # Print the final solution 
-for i in range(C):
-	for j in range(R):
-		for k in range(S):
+for k in range(S):
+	print("slot" + str(k+1))
+	ans = []
+	for i in range(C):
+		for j in range(R):
 			if(x[i][j][k].value() == 1):
-				print("Schedule " + course_names[i] + " in slot " + str(k+1) + " and room " + str(j+1))
+				ans.append(course_names[i] + " room" + str(j+1))
+	ans.sort()
+	for line in ans:
+		print(line)
 ########################################################################################
