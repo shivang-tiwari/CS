@@ -137,7 +137,7 @@ for i in range(C):
 for k in range(S):
 	for i in range(C):
 		for j in range(R):
-			if(len(students[i]) > int(cap[j])):
+			if(len(students[i]) > cap[j]):
 				Lp_prob += x[i][j][k] == 0
 
 # No two courses in the same slot and same room
@@ -158,16 +158,19 @@ for k in range(S):
 			Lp_prob += allsum <= 1
 			
 ########################################################################################
-status = Lp_prob.solve(p.PULP_CBC_CMD(msg=0))   # Solver 
+status = Lp_prob.solve(p.PULP_CBC_CMD(msg=0))   # Solver
 # Print the final solution 
-for k in range(S):
-	print("slot" + str(k+1))
-	ans = []
-	for i in range(C):
-		for j in range(R):
-			if(x[i][j][k].value() == 1):
-				ans.append(course_names[i] + " room" + str(j+1))
-	ans.sort()
-	for line in ans:
-		print(line)
+if status == -1:
+	print("Not possible")
+else:
+	for k in range(S):
+		print("slot" + str(k+1))
+		ans = []
+		for i in range(C):
+			for j in range(R):
+				if(x[i][j][k].value() == 1):
+					ans.append(course_names[i] + " room" + str(j+1))
+		ans.sort()
+		for line in ans:
+			print(line)
 ########################################################################################
