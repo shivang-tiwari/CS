@@ -1,0 +1,154 @@
+%
+% This is the LaTeX template file for lecture notes for CS294-8,
+% Computational Biology for Computer Scientists.  When preparing 
+% LaTeX notes for this class, please use this template.
+%
+% To familiarize yourself with this template, the body contains
+% some examples of its use.  Look them over.  Then you can
+% run LaTeX on this file.  After you have LaTeXed this file then
+% you can look over the result either by printing it out with
+% dvips or using xdvi.
+%
+% This template is based on the template for Prof. Sinclair's CS 270.
+
+\documentclass[11pt, twosides]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{graphics}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{xcolor}
+\setlength{\oddsidemargin}{0.25 in}
+\setlength{\evensidemargin}{-0.25 in}
+\setlength{\topmargin}{-0.6 in}
+\setlength{\textwidth}{6.5 in}
+\setlength{\textheight}{8.5 in}
+\setlength{\headsep}{0.75 in}
+\setlength{\parindent}{0 in}
+\setlength{\parskip}{0.1 in}
+
+%
+% The following commands set up the lecnum (lecture number)
+% counter and make various numbering schemes work relative
+% to the lecture number.
+%
+\newcounter{lecnum}
+\renewcommand{\thepage}{\thelecnum-\arabic{page}}
+\renewcommand{\thesection}{\thelecnum.\arabic{section}}
+\renewcommand{\theequation}{\thelecnum.\arabic{equation}}
+\renewcommand{\thefigure}{\thelecnum.\arabic{figure}}
+\renewcommand{\thetable}{\thelecnum.\arabic{table}}
+
+%
+% The following macro is used to generate the header.
+%
+\newcommand{\lecture}[4]{
+%   \pagestyle{myheadings}
+   \thispagestyle{plain}
+   \newpage
+   \setcounter{lecnum}{#1}
+   \setcounter{page}{1}
+   \noindent
+   \begin{center}
+   \framebox{
+      \vbox{\vspace{2mm}
+    \hbox to 6.28in { {\bf CS 419M Introduction to Machine Learning
+                        \hfill Spring 2021-22} }
+       \vspace{4mm}
+       \hbox to 6.28in { {\Large \hfill Lecture #1: #2  \hfill} }
+       \vspace{2mm}
+       \hbox to 6.28in { {\it Lecturer: #3 \hfill Scribe: #4} }
+      \vspace{2mm}}
+   }
+   \end{center}
+   \markboth{Lecture #1: #2}{Lecture #1: #2}
+}
+
+%
+% Convention for citations is authors' initials followed by the year.
+% For example, to cite a paper by Leighton and Maggs you would type
+% \cite{LM89}, and to cite a paper by Strassen you would type \cite{S69}.
+% (To avoid bibliography problems, for now we redefine the \cite command.)
+% Also commands that create a suitable format for the reference list.
+% \renewcommand{\cite}[1]{[#1]}
+% \def\beginrefs{\begin{list}%
+%         {[\arabic{equation}]}{\usecounter{equation}
+%          \setlength{\leftmargin}{2.0truecm}\setlength{\labelsep}{0.4truecm}%
+%          \setlength{\labelwidth}{1.6truecm}}}
+% \def\endrefs{\end{list}}
+% \def\bibentry#1{\item[\hbox{[#1]}]}
+
+%Use this command for a figure; it puts a figure in wherever you want it.
+%usage: \fig{NUMBER}{SPACE-IN-INCHES}{CAPTION}
+% \newcommand{\fig}[3]{
+% 			\vspace{#2}
+% 			\begin{center}
+% 			Figure \thelecnum.#1:~#3
+% 			\end{center}
+% 	}
+% Use these for theorems, lemmas, proofs, etc.
+\newtheorem{theorem}{Theorem}[lecnum]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+% \newenvironment{proof}{{\bf Proof:}}{\hfill\rule{2mm}{2mm}}
+
+% **** IF YOU WANT TO DEFINE ADDITIONAL MACROS FOR YOURSELF, PUT THEM HERE:
+
+\begin{document}
+%FILL IN THE RIGHT INFO.
+%\lecture{**LECTURE-NUMBER**}{**DATE**}{**LECTURER**}{**SCRIBE**}
+\lecture{9}{Deriving stability of a classification}{Abir De}{Group 9}
+%\lecture{x}{Title}{Abir De}{Group y}
+
+\section{Defining Stability}
+We define an algorithm $A:\mathcal{S}\to\mathbb{R}^d$ to be stable if
+\[\|A(S)-A(S')\| = \mathcal{O}\left(\dfrac{1}{|S|}\right)\]
+The condition for this stability is for sets $S$ and $S'$ such that they differ only in element hence $S' = e'\cup(S\backslash e)$ where $e\neq e'$.\\
+\[\|A(S)-A(S\backslash e)\| = \mathcal{O}\left(\dfrac{1}{|S|}\right)\]
+We want to see that whether it is true that changing one element from the set changes its stability or not.
+
+\begin{proof}
+We see that $\|A(S)-A(S\backslash e)\| = \mathcal{O}(1/|S|)$ and $\|A(S')-A(S'\backslash e')\| = \mathcal{O}(1/|S'|)$.
+\begin{align*}
+    \|A(S) - A(S')\| &\leq \|A(S)-A(S\backslash e)\| + \|A(S'\backslash e') - A(S')\|\\
+    &= \mathcal{O}(1/|S|) + \mathcal{O}(1/|S'|)\\
+    &= \mathcal{O}\left(\frac{1}{|S|}\right)
+\end{align*}
+Hence the statement is true.
+\end{proof}
+
+\section{Applying stability to classification}
+Let us say we have a dataset $D = \{(x_i,y_i)\}$. Let us say we have some convex loss function $l(w^Tx,y)$ which is Lipschitz continuous. Let us define the following function over $S \subset D$ which has regularization
+\[F_w(S) = \sum_S (l(w^Tx_i,y_i) + \lambda\|w\|^2)\]
+Using this function we can define the following vector which minimizes the sum of the loss as
+\[w^*(S) = \text{argmin}_wF_w(S)\]
+\begin{proposition}
+For the defined $F_w(S)$ with a convex and Lipschitz $l(w^Tx,y)$, $w^*$ is stable.
+\end{proposition}
+\begin{proof}
+Let us define the notation $l(w^*(S),e) = l(w^*(S)^Tx,y)$. Now we take a close look at the value $F_{w^*(S')}(S) - F_{w^*(S)}(S)$. We must have the following hold
+\[F_{w^*(S')}(S) - F_{w^*(S)}(S) = F_{w^*(S')}(S') - F_{w^*(S)}(S') + l(w^*(S'),e) - l(w^*(S),e) + l(w^*(S),e') - l(w^*(S'),e')\]
+Since $w^*(S') = \text{argmin}_wF_w(S')$ we have $F_{w^*(S')}(S') - F_{w^*(S)}(S') \leq 0$ hence
+\[F_{w^*(S')}(S) - F_{w^*(S)}(S) \leq l(w^*(S'),e) - l(w^*(S),e) + l(w^*(S),e') - l(w^*(S'),e') \leq 2L\|w^*(S)-w^*(S')\|\]
+The last part of the inequality comes by combining the triangle inequality with the Lipschitz condition of $ l(w^*(S'),e) - l(w^*(S),e) \leq L\|w^*(S)-w^*(S')\|$.\\
+We can also expand $F_{w^*(S')}(S) - F_{w^*(S)}(S)$ as a taylor expansion about the point $w^*(S)$.
+\[F_{w^*(S')}(S) - F_{w^*(S)}(S) = \frac{\partial F_w(S)}{\partial w}\bigg|_{w = w^*(S)}(w - w^*(S)) + \frac{1}{2}(w-w^*(S))^TH(w-w^*(S)) + \dots\]
+Here $H(F_w(S))$ is the Hessian for the function $F_w(S)$ with respect to $w$. We know that $w^*(S)$ minimizes $F_w(S)$ hence the first term vanishes and we are left with the inequality
+\[F_{w^*(S')}(S) - F_{w^*(S)}(S) \geq \frac{1}{2}(w^*(S')-w^*(S))^TH(F_{w^*(S')}(S))(w^*(S')-w^*(S))\]
+We know that $l(w,e)$ is a convex function hence the Hessian $H(l(w,e))$ is positive semi-definite. Hence we can surely conclude that the Hessian of the sum of all $l(w,e)$ terms is also positive semi-definite.\\
+Now we can look at the regularization term, this will have to add a $2\lambda|S|I$ to the Hessian by definition and so we can conclude that $H(F_w(S)) \geq 2\lambda|S|I$ since the loss terms Hessian will anyways be positive semi-definite. Hence we have
+\[F_{w^*(S')}(S) - F_{w^*(S)}(S) \geq \frac{2\lambda|S|}{2}(w^*(S')-w^*(S))^T(w^*(S')-w^*(S)) \geq \lambda|S|\|w^*(S')-w^*(S)\|^2\]
+By combining the two inequalities we obtain by using first the Lipschitz condition and then that of convexity we obtain
+\[\lambda|S|\|w^*(S')-w^*(S)\|^2 \leq F_{w^*(S')}(S) - F_{w^*(S)}(S) \leq 2L\|w^*(S)-w^*(S')\|\]
+This subsequently reduces to 
+\[\|w^*(S')-w^*(S)\| \leq \frac{2L}{\lambda|S|} = \mathcal{O}\left(\frac{1}{|S|}\right)\]
+Hence we have proven that with a convex and Lipschitz $l(w^Tx,y)$, $w^*$ is stable.
+\section{Group Details and Individual Contribution}
+Classification section done by Mahadevan Subramanian, Roll no. 190260027. First section by Shivang Tiwari (190040112).
+\end{proof}
+\end{document}
